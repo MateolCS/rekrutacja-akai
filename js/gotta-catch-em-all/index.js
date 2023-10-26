@@ -5,14 +5,41 @@
 */
 
 // tutaj złapiemy sekcję, do której będziemy dodawać pokemony
+
+const createPokemon = (inPokemon) => {
+  const pokemon = document.createElement("div");
+  pokemon.classList.add("pokemon");
+
+  const pokemonName = document.createElement("h4");
+  pokemonName.innerText = inPokemon.name;
+
+  const pokemonImage = document.createElement("img");
+  pokemonImage.src = inPokemon.image;
+
+  const pokemonTypes = document.createElement("ul");
+  inPokemon.types.forEach((type) => {
+    const pokemonType = document.createElement("li");
+    pokemonType.innerText = type;
+    pokemonTypes.appendChild(pokemonType);
+  });
+
+  pokemon.appendChild(pokemonName);
+  pokemon.appendChild(pokemonImage);
+  pokemon.appendChild(pokemonTypes);
+
+  return pokemon;
+};
+
 const pokemonsContainer = document.querySelector(".pokemons");
 
 function renderPokemons(pokemons) {
-  // uzupełnij tutaj
+  pokemons.forEach((pokemon) => {
+    pokemonsContainer.appendChild(createPokemon(pokemon));
+  });
 }
 
 // następnie wykonaj uzupełnioną metodę z tablicą pokemons, aby sprawdzić czy wszystko działa
-// renderPokemons(pokemons);
+renderPokemons(pokemons);
 
 /*
   2. Przeglądanie całej listy pokemonów może okazać się trochę uciążliwe. Fajnie byłoby skorzystać z filtrów, które już znajdują sie w pliku html. 
@@ -22,8 +49,28 @@ function renderPokemons(pokemons) {
 */
 
 function filterPokemons(pokemons) {
-  // uzupełnij tutaj
-  // zwróć odfiltrowaną tablicę pokemonów
+  pokemonsContainer.innerHTML = "";
+  const filterInputs = document.querySelectorAll(
+    "input[type=checkbox]:checked"
+  );
+
+  const filteredTypes = Array.from(filterInputs).map((type) => type.id);
+
+  const pokemonName = document
+    .querySelector("#pokemon-name")
+    .value.toLowerCase();
+
+  const filteredPokemons = pokemons.filter((pokemon) => {
+    const hasCorrectType = filteredTypes.some((type) => {
+      return pokemon.types.includes(type);
+    });
+
+    const hasCorrectName = pokemon.name.toLowerCase().includes(pokemonName);
+    return hasCorrectName && hasCorrectType;
+  });
+
+  console.log(filteredPokemons);
+  return filteredPokemons;
 }
 
 const form = document.querySelector("form");
@@ -31,7 +78,7 @@ const form = document.querySelector("form");
 function submitForm(event) {
   event.preventDefault();
   // następnie wykonaj uzupełnioną metodę z tablicą pokemons, aby sprawdzić czy wszystko działa
-  // renderPokemons(filterPokemons(pokemons));
+  renderPokemons(filterPokemons(pokemons));
 }
 
 form.addEventListener("submit", submitForm);
